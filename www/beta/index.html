@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<title>Home - My Company</title>
+		<meta charset="utf-8" />
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		
+		<link rel="shortcut icon" href="/favicon.ico" />
+		
+		<link rel="stylesheet" type="text/css" href="ui/css/main.css" />
+ 		
+ 		<script type="text/javascript" src="ui/vendor/jquery-1.6.2.min.js"></script>
+ 		<script type="text/javascript" src="ui/vendor/jquery-noconflict.js"></script>
+ 		<script type="text/javascript" src="ui/vendor/jquery-ui-1.8.16.custom.min.js"></script>
+ 		<script type="text/javascript" src="ui/vendor/jquery-collision-1.0.1.js"></script>
+ 		<script type="text/javascript" src="ui/vendor/jquery-ui-draggable-collision-1.0.1.js"></script>
+ 		
+ 		
+ 		
+		<script type="text/javascript">
+			jQuery(function($) {
+				$(window).load(function() {
+					$('.ui-superdock-menu').animate({
+						left: parseInt($(window).width()) - 50 - parseInt($('.ui-superdock-menu').width())
+					}, 500);
+				});
+			
+			
+				var make_draggable = function(items) {
+					items.draggable({
+		        zIndex: 3,
+		        addClasses: true,
+		        containment: '.ui-superdock-container',
+		        /*obstacle: '.ui-superdock-menu-item:not(.ui-draggable-dragging), .ui-superdock-menu-windows, .ui-superdock-menu-header, .ui-superdock-menu-footer, .ui-superdock-bar', 
+		        preventCollision: true,
+		        restraint: '.ui-superdock-container', 
+		        preventProtrusion: true,*/
+		        helper: 'clone',
+		        appendTo: '.ui-superdock-container',
+		        stack: '.ui-superdock-menu-item.ui-dragged',
+						start: function(event, ui) {
+								var offset = $(this).offset();
+								
+								$(this).detach();
+						},
+						stop: function(event, ui) {
+							$(event.target).unbind('*');
+							
+							make_draggable(ui.helper);
+							
+							return false;
+						}	
+					});
+				};
+				
+				make_draggable($('.ui-superdock-menu-item'));
+				
+				$('.ui-superdock-menu').draggable({
+	        zIndex: 3,
+	        addClasses: true,
+	        containment: '.ui-superdock-container',
+	        handle: '.ui-superdock-menu-footer',
+	        axis: 'x',
+					start: function(event, ui) {
+						if(!$(this).hasClass('ui-dragged'))
+							$(this).addClass('ui-dragged', 500);
+					}
+				});
+				
+
+				$('.ui-superdock-menu-items, .ui-superdock-menu-windows').droppable({
+					accept: '.ui-superdock-menu-item',
+					tolerance: 'touch',
+					drop: function(event, ui) {
+						var menu_items = $('.ui-superdock-menu-items');
+						
+						var last_item = menu_items.find('.ui-superdock-menu-item:last');
+						
+						if(last_item.length)
+							var top = (parseInt(ui.helper.css('top')) - (last_item.offset().top + last_item.height())) / 2;
+						else
+							var top = parseInt(ui.helper.css('top'));
+						
+						if(last_item.length)
+							var left = parseInt(ui.helper.css('left')) - last_item.offset().left;
+						else
+							var left = parseInt(ui.helper.css('left'));
+							
+						ui.helper.css({
+							position: 'relative',
+							top: top,
+							left: left
+						});
+						
+						ui.helper.appendTo(menu_items);
+						
+						ui.helper.animate({
+							left: 0,
+							top: 0
+						}, 500);
+						
+						ui.helper.removeClass('ui-draggable-dragging');
+					}
+				});
+			});
+		</script>
+
+	</head>
+	<body>
+		<div class="ui-superdock-container">
+			<div class="ui-superdock-bar">
+			
+			</div>
+			<div class="ui-superdock-menu">
+				<div class="ui-superdock-menu-header"></div>
+				<ul class="ui-superdock-menu-windows"></ul>
+				<div class="ui-superdock-menu-items">
+					<div class="ui-superdock-menu-item"><a class="ui-superdock-menu-anchor brown" href="#">About Me</a></div>
+					<div class="ui-superdock-menu-item"><a class="ui-superdock-menu-anchor green" href="#">Portfolio</a></div>
+					<div class="ui-superdock-menu-item"><a class="ui-superdock-menu-anchor red" href="#">Links</a></div>
+					<div class="ui-superdock-menu-item"><a class="ui-superdock-menu-anchor blue" href="#">Resume</a></div>
+					<div class="ui-superdock-menu-item"><a class="ui-superdock-menu-anchor brown" href="#">Contact Me</a></div>
+				</div>
+				<div class="ui-superdock-menu-buffer"></div>
+				<div class="ui-superdock-menu-footer"></div>
+			</div>
+		</div>
+	</body>
+</html>
